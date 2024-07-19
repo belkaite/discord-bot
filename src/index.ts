@@ -2,6 +2,7 @@ import express from 'express'
 import 'dotenv/config'
 import { Client, GatewayIntentBits } from 'discord.js'
 
+const channelId = '1263547998907011197'
 const app = express()
 const port = process.env.PORT || 3000
 app.use(express.json())
@@ -18,9 +19,9 @@ client.on('ready', () => {
   console.log('bot is ready')
 })
 
+// sukonfiguruoju, ka botui reik daryt
 client.on('messageCreate', async (message) => {
   if (message.content === 'ping') {
-    const channelId = '1263547998907011197'
     const congratsMessage = 'Congrats on completing your sprint!'
     await sendMessage(channelId, congratsMessage)
   }
@@ -32,7 +33,7 @@ app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`)
 })
 
-async function sendMessage(channelId: string, message: string) {
+async function sendMessage(message: string) {
   try {
     const channel = await client.channels.fetch(channelId)
     await channel.send(message)
@@ -41,18 +42,41 @@ async function sendMessage(channelId: string, message: string) {
   }
 }
 
-app.post('/congrats', async (req, res) => {
-  const { channelId, message } = req.body;
+const users = [{ username: 'monikabelkaite' }, { username: 'jevgenijgamper' }]
 
-  if (!channelId || !message) {
-    return res.status(400).json({ error: 'channelId and message are required'})
+const sprints = [
+  { code: 'WD-1.1', title: 'Web dev Sprint 1.1' },
+  { code: 'WD-1.2', title: 'Web dev Sprint 1.2' },
+]
+
+const templates = [
+  `Congrats on completing {sprintTitle}, {username}`,
+  `Well done, {username}. You finished {sprintTitle}`,
+]
+
+app.post('/congrats', async (req, res) => {
+  const { userName, sprintCode } = req.body
+
+  const user = users.find((u) => u.username === userName)
+  if (!user) {
+    return res.status(404).json({ error: 'user not found' })
   }
 
+  const sprint = sprints.find((s) => s.code === sprintCode)
+  if (!sprint) {
+    return res.status(404).json({ error: 'user not found' })
+  }
+
+  const template = templates[Math.floor(Math.random() * templates.length)]
+
+  const congratsMessage = template
+    .replace('{username}', userName)
+    .replace('{sprintTitle}', sprintCode)
+
   try {
-    await sendMessage(channelId, message)
+    await sendMessage(congratsMessage)
     res.status(200).send('Message sent successfully')
   } catch (error) {
     res.status(500).send('Error sending message')
   }
-
-  })
+})
