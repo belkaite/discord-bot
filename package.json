@@ -13,7 +13,8 @@
     "migrate:latest": "tsx src/database/migrate/bin",
     "gen:types": "kysely-codegen --camel-case --dialect sqlite --out-file src/database/types.ts && prettier --write src/database/types.ts",
     "test": "vitest",
-    "coverage": "vitest run --coverage"
+    "coverage": "vitest run --coverage",
+    "generate-migration": "tsx src/database/generateMigration.ts"
   },
   "keywords": [],
   "author": "",
