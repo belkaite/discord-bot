@@ -24,13 +24,13 @@ const timestamp = getTimestamp()
 const fileName = `${timestamp}_${migrationName}.ts`
 const filePath = path.join(migrationsDir, fileName)
 
-const template = `import { Kysely, SqliteDialect } from 'kysely';
+const template = `import { Kysely, SqliteDatabase } from 'kysely';
 
-export async function up(db: Kysely<SqliteDialect>) {
+export async function up(db: Kysely<SqliteDatabase>) {
 
 }
 
-export async function down(db: Kysely<SqliteDialect>) {
+export async function down(db: Kysely<SqliteDatabase>) {
 
 }
 `
