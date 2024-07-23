@@ -36,9 +36,9 @@ router.post('/', async (req, res) => {
 
   try {
     await sendMessage(congratsMessage)
-    res.status(200).send('Message sent successfully')
+    return res.status(200).send('Message sent successfully')
   } catch (error) {
-    res.status(500).send('Error sending message')
+    return res.status(500).send('Error sending message')
   }
 })
 

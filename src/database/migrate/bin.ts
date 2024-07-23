@@ -4,7 +4,6 @@ import * as fs from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import SQLite, { type Database } from 'better-sqlite3'
 import { FileMigrationProvider, Kysely, SqliteDialect } from 'kysely'
-import { error } from 'console'
 import { migrateToLatest } from './index'
 
 const MIGRATIONS_PATH = '../migrations'
