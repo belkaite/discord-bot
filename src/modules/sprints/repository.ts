@@ -1,22 +1,49 @@
-import type { Insertable, Selectable, Kysely } from 'kysely'
+import type { Insertable, Selectable, Updateable, Kysely } from 'kysely'
 import type { Sprints, DB } from '@/database/types'
+import { keys } from './schema'
 
 const TABLE = 'sprints'
 type Row = Sprints
 type RowWithoutId = Omit<Row, 'id'>
 type RowInsert = Insertable<RowWithoutId>
 type RowSelect = Selectable<Row>
+type RowUpdate = Updateable<RowWithoutId>
 
 export default (db: Kysely<DB>) => ({
   async create(sprint: RowInsert): Promise<Row> {
     return db
       .insertInto(TABLE)
       .values(sprint)
-      .returning(['id', 'code', 'title'])
-      .execute()
+      .returning(keys)
+      .executeTakeFirst()
   },
 
-  async selectSprints(): Promise<RowSelect[]> {
+  async selectAll(): Promise<RowSelect[]> {
     return db.selectFrom(TABLE).selectAll().execute()
+  },
+
+  async selectById(id: number): Promise<RowSelect[]> {
+    return db
+      .selectFrom(TABLE)
+      .select(keys)
+      .where('id', '=', id)
+      .executeTakeFirst()
+  },
+
+  async update(id: number, partial: RowUpdate): Promise<RowSelect> {
+    return db
+      .updateTable(TABLE)
+      .set(partial)
+      .where('id', '=', id)
+      .returning(keys)
+      .executeTakeFirst()
+  },
+
+  async delete(id: number) {
+    return db
+      .deleteFrom(TABLE)
+      .where('id', '=', id)
+      .returning(keys)
+      .executeTakeFirst()
   },
 })
