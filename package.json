@@ -45,6 +45,7 @@
     "discord.js": "^14.15.3",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "glob": "^11.0.0",
     "http-status-codes": "^2.3.0",
     "lodash": "^4.17.21",
     "zod": "^3.23.4"
