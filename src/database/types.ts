@@ -6,26 +6,26 @@ export type Generated<T> =
     : ColumnType<T, T | undefined, T>
 
 export interface Messages {
-  id: Generated<number | null>
-  sprintId: number | null
-  templateId: number | null
+  id: Generated<number>
+  sprintId: number
+  templateId: number
   timestamp: Generated<number>
-  userId: number | null
+  userId: number
 }
 
 export interface Sprints {
   code: string
-  id: Generated<number | null>
+  id: Generated<number>
   title: string
 }
 
 export interface Templates {
   content: string
-  id: Generated<number | null>
+  id: Generated<number>
 }
 
 export interface Users {
-  id: Generated<number | null>
+  id: Generated<number>
   username: string
 }
 
