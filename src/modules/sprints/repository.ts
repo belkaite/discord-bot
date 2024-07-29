@@ -31,7 +31,15 @@ export default (db: Kysely<DB>) => ({
       .executeTakeFirst()
   },
 
-  async update(id: number, partial: RowUpdate): Promise<RowSelect | undefined > {
+  async selectByCode(code: string): Promise<RowSelect | undefined> {
+    return db
+      .selectFrom(TABLE)
+      .select(keys)
+      .where('code', '=', code)
+      .executeTakeFirst()
+  },
+
+  async update(id: number, partial: RowUpdate): Promise<RowSelect | undefined> {
     parseUpdateable(partial)
     return db
       .updateTable(TABLE)

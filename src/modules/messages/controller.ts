@@ -1,45 +1,56 @@
 import { Router } from 'express'
+import type { Kysely } from 'kysely'
+import { StatusCodes } from 'http-status-codes'
 import { sendMessage } from '@/discordClient'
+import type { DB } from '@/database/types'
+import buildSprintsRepository from '@/modules/sprints/repository'
 
-const router = Router()
+export default (database: Kysely<DB>) => {
+  const router = Router()
+  const sprintsRepository = buildSprintsRepository(database)
 
-router.post('/', async (req, res) => {
-  const { userName, sprintCode } = req.body
+  router.post('/', async (req, res) => {
+    const { username, sprintCode } = req.body
 
-  const sprints = [
-    { code: 'WD-1.1', title: 'Web dev Sprint 1.1' },
-    { code: 'WD-1.2', title: 'Web dev Sprint 1.2' },
-  ]
+    try {
+      const sprint = await sprintsRepository.selectByCode(sprintCode)
+      if (!sprint) {
+        return res
+          .status(StatusCodes.NOT_FOUND)
+          .json({ error: 'Sprint not found' })
+      }
+    } catch (error) {
+      return res.status(500).send('Error finding sprint')
+    }
 
-  const templates = [
-    `Congrats on completing {sprintTitle}, {username}`,
-    `Well done, {username}. You finished {sprintTitle}`,
-  ]
+    const templates = [
+      `Congrats on completing {sprintTitle}, {username}`,
+      `Well done, {username}. You finished {sprintTitle}`,
+    ]
 
-  const users = [{ username: 'monikabelkaite' }, { username: 'jevgenijgamper' }]
+    const users = [
+      { username: 'monikabelkaite' },
+      { username: 'jevgenijgamper' },
+    ]
 
-  const user = users.find((u) => u.username === userName)
-  if (!user) {
-    return res.status(404).json({ error: 'user not found' })
-  }
+    const user = users.find((u) => u.username === username)
+    if (!user) {
+      return res.status(404).json({ error: 'user not found' })
+    }
 
-  const sprint = sprints.find((s) => s.code === sprintCode)
-  if (!sprint) {
-    return res.status(404).json({ error: 'user not found' })
-  }
+    const template = templates[Math.floor(Math.random() * templates.length)]
 
-  const template = templates[Math.floor(Math.random() * templates.length)]
+    const congratsMessage = template
+      .replace('{username}', username)
+      .replace('{sprintTitle}', sprintCode)
 
-  const congratsMessage = template
-    .replace('{username}', userName)
-    .replace('{sprintTitle}', sprintCode)
+    try {
+      await sendMessage(congratsMessage)
+      return res.status(200).send('Message sent successfully')
+    } catch (error) {
+      return res.status(500).send('Error sending message')
+    }
+  })
 
-  try {
-    await sendMessage(congratsMessage)
-    return res.status(200).send('Message sent successfully')
-  } catch (error) {
-    return res.status(500).send('Error sending message')
-  }
-})
-
-export default router
+  return router
+}
