@@ -1,7 +1,6 @@
 import supertest from 'supertest'
 import createTestDatabase from '@tests/utils/createTestDatabase'
 import type { Kysely } from 'kysely'
-import express from 'express'
 import { fakeSprint, sprintMatcher } from './utils'
 import buildRepository from '../repository'
 import createApp from '@/app'
