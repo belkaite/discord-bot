@@ -12,8 +12,10 @@ export default (database: Kysely<DB>) => {
   router.post('/', async (req, res) => {
     const { username, sprintCode } = req.body
 
+    let sprint
+
     try {
-      const sprint = await sprintsRepository.selectByCode(sprintCode)
+      sprint = await sprintsRepository.selectByCode(sprintCode)
       if (!sprint) {
         return res
           .status(StatusCodes.NOT_FOUND)
@@ -42,7 +44,7 @@ export default (database: Kysely<DB>) => {
 
     const congratsMessage = template
       .replace('{username}', username)
-      .replace('{sprintTitle}', sprintCode)
+      .replace('{sprintTitle}', sprint.title)
 
     try {
       await sendMessage(congratsMessage)
