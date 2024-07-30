@@ -9,16 +9,23 @@ type SprintRepository = ReturnType<typeof buildRepository>
 let db: Kysely<DB>
 let repository: SprintRepository
 
+// afterEach(async () => {
+//   await db.deleteFrom('sprints').execute()
+// })
+
 beforeAll(async () => {
   db = await createTestDatabase()
   repository = buildRepository(db)
+
+})
+
+beforeEach(async() => {
+  await db.deleteFrom('sprints').execute()
 })
 
 afterAll(() => db.destroy())
 
-afterEach(async () => {
-  await db.deleteFrom('sprints').execute()
-})
+
 
 describe('create', () => {
   it('should create a sprint and get a sprint', async () => {

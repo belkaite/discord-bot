@@ -20,7 +20,7 @@ beforeAll(async () => {
 
 afterAll(() => db.destroy())
 
-afterEach(async () => {
+beforeEach(async () => {
   await db.deleteFrom('sprints').execute()
 })
 
