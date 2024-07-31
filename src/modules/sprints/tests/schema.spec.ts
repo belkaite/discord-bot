@@ -1,4 +1,4 @@
-import { omit } from 'lodash/fp'
+import { omit } from 'lodash'
 import { parse, parseId, parseInsertable, parseUpdateable } from '../schema'
 
 const fakeSprint = () => ({
@@ -15,7 +15,7 @@ describe('zod schema validation', () => {
   })
 
   it('throws an error when code is less or more than 6 strings', () => {
-    const sprintWithoutCode = omit(['code'], fakeSprint())
+    const sprintWithoutCode = omit(fakeSprint(), ['code'])
     const sprintWithShortCode = {
       ...fakeSprint(),
       code: 'WD',
@@ -31,7 +31,7 @@ describe('zod schema validation', () => {
   })
 
   it('throws an error due to missing title', () => {
-    const sprintWithoutTitle = omit(['title'], fakeSprint())
+    const sprintWithoutTitle = omit(fakeSprint(), ['title'])
     const emptyTitle = {
       ...fakeSprint(),
       title: '',
