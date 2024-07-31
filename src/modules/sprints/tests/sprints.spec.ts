@@ -32,11 +32,11 @@ describe('GET', () => {
   })
 
   it('should return a list of existing sprints', async () => {
-    await repository.create(fakeSprint({}))
+    await repository.create(fakeSprint())
 
     const { body } = await supertest(app).get('/sprints').expect(200)
 
-    expect(body).toEqual([sprintMatcher({})])
+    expect(body).toEqual([sprintMatcher()])
   })
 })
 
@@ -54,10 +54,10 @@ describe('POST', () => {
   it('should return 201 and created sprint', async () => {
     const { body } = await supertest(app)
       .post('/sprints')
-      .send(fakeSprint({}))
+      .send(fakeSprint())
       .expect(201)
 
-    expect(body).toEqual(sprintMatcher({}))
+    expect(body).toEqual(sprintMatcher())
   })
 })
 

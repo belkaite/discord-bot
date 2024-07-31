@@ -1,10 +1,9 @@
 import { omit } from 'lodash'
 import { parse, parseId, parseInsertable, parseUpdateable } from '../schema'
 
-const fakeTemplate = (overrides = {}) => ({
+const fakeTemplate = () => ({
   id: 1,
   content: 'Congrats on completing {sprintTitle}, {username}',
-  ...overrides,
 })
 
 describe('zod schema validation', () => {
@@ -15,7 +14,7 @@ describe('zod schema validation', () => {
   })
 
   it('throws an error due to missing content', () => {
-    const templateWithEmptyContent = fakeTemplate({ content: '' })
+    const templateWithEmptyContent = { ...fakeTemplate(), content: '' }
     const templateWithNoContent = omit(fakeTemplate(), ['content'])
 
     expect(() => parse(templateWithEmptyContent)).toThrow(/content/i)
