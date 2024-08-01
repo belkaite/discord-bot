@@ -1,6 +1,6 @@
 import type { Insertable, Selectable, Updateable, Kysely } from 'kysely'
 import type { Sprints, DB } from '@/database/types'
-import { keys, parseInsertable, parseUpdateable } from './schema'
+import { keys } from './schema'
 
 const TABLE = 'sprints'
 type Row = Sprints
@@ -11,7 +11,6 @@ type RowUpdate = Updateable<RowWithoutId>
 
 export default (db: Kysely<DB>) => ({
   async create(sprint: RowInsert): Promise<RowSelect | undefined> {
-    parseInsertable(sprint)
     return db
       .insertInto(TABLE)
       .values(sprint)
@@ -40,7 +39,6 @@ export default (db: Kysely<DB>) => ({
   },
 
   async update(id: number, partial: RowUpdate): Promise<RowSelect | undefined> {
-    parseUpdateable(partial)
     return db
       .updateTable(TABLE)
       .set(partial)

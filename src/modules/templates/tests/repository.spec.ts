@@ -20,14 +20,28 @@ afterEach(async () => {
 
 afterAll(() => db.destroy())
 
-describe('create', () => {
+describe('create and select', () => {
   it('should create a template and get a template', async () => {
-    const template = repository.create(fakeTemplate())
+    const template = await repository.create(fakeTemplate())
 
     expect(template).toEqual(templateMatcher())
 
     const templates = await repository.selectAll()
     expect(templates).toHaveLength(1)
     expect(templates[0]).toEqual(template)
+  })
+
+  it('should select the template by the id', async () => {
+    await repository.create(fakeTemplate({ id: 10 }))
+
+    const foundTemplate = await repository.selectByID(10)
+
+    expect(foundTemplate).toEqual(templateMatcher({ id: 10 }))
+  })
+
+  it('should return undefined when searching for a templare with non existing ID', async () => {
+    const notFoundTemplate = await repository.selectByID(1000)
+
+    expect(notFoundTemplate).toBeUndefined()
   })
 })
