@@ -45,3 +45,51 @@ describe('create and select', () => {
     expect(notFoundTemplate).toBeUndefined()
   })
 })
+
+describe('update', () => {
+  it('should update the template', async () => {
+    await repository.create(fakeTemplate({ id: 10 }))
+
+    const updatedTemplate = await repository.update(
+      10,
+      fakeTemplate({
+        content: 'Congratulations, {username}, on finishing {sprintTitle}!',
+      })
+    )
+
+    expect(updatedTemplate).toEqual(
+      templateMatcher({
+        id: 10,
+        content: 'Congratulations, {username}, on finishing {sprintTitle}!',
+      })
+    )
+  })
+
+  it('should return undefined when updating the template with non existing ID', async () => {
+    const updatedTemplate = await repository.update(
+      1000,
+      fakeTemplate({
+        content: 'Congratulations, {username}, on finishing {sprintTitle}!',
+      })
+    )
+    expect(updatedTemplate).toBeUndefined()
+  })
+
+  describe('delete', async () => {
+    it('should delete the template', async () => {
+      await repository.create(fakeTemplate({ id: 10 }))
+
+      await repository.delete(10)
+
+      const templates = await repository.selectAll()
+
+      expect(templates).toHaveLength(0)
+    })
+
+    it('should return undefined when deleting not existing template', async () => {
+      const deletedTemplate = await repository.delete(1000)
+
+      expect(deletedTemplate).toBeUndefined()
+    })
+  })
+})

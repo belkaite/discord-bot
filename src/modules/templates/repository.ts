@@ -1,6 +1,6 @@
 import type { Insertable, Selectable, Updateable, Kysely } from 'kysely'
 import type { DB, Templates } from '@/database/types'
-import { keys, parseInsertable, parseUpdateable } from './schema'
+import { keys } from './schema'
 
 const TABLE = 'templates'
 type Row = Templates
@@ -28,5 +28,18 @@ export default (db: Kysely<DB>) => ({
       .select(keys)
       .where('id', '=', id)
       .executeTakeFirst()
+  },
+
+  async update(id: number, partial: RowUpdate): Promise<RowSelect | undefined> {
+    return db
+      .updateTable(TABLE)
+      .set(partial)
+      .where('id', '=', id)
+      .returning(keys)
+      .executeTakeFirst()
+  },
+
+  async delete(id: number) {
+    return db.deleteFrom(TABLE).where('id', '=', id).returning(keys).executeTakeFirst()
   },
 })
