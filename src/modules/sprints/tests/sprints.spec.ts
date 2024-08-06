@@ -16,11 +16,12 @@ beforeAll(async () => {
   db = await createTestDatabase()
   repository = buildRepository(db)
   app = createApp(db)
+  await db.deleteFrom('sprints').execute()
 })
 
 afterAll(() => db.destroy())
 
-beforeEach(async () => {
+afterEach(async () => {
   await db.deleteFrom('sprints').execute()
 })
 
