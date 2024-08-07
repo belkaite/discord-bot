@@ -56,8 +56,8 @@ export default (database: Kysely<DB>) => {
   router.delete('/:id', async (req, res, next) => {
     try {
       const id = schema.parseId(req.params.id)
-      const sprint = await sprints.delete(id)
-      if (sprint) {
+      const deletedSprint = await sprints.delete(id)
+      if (deletedSprint) {
         res.status(StatusCodes.NO_CONTENT).send()
       } else {
         res.status(StatusCodes.NOT_FOUND).json({ error: 'Sprint not found' })

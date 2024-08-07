@@ -40,6 +40,10 @@ export default (db: Kysely<DB>) => ({
   },
 
   async delete(id: number) {
-    return db.deleteFrom(TABLE).where('id', '=', id).returning(keys).executeTakeFirst()
+    return db
+      .deleteFrom(TABLE)
+      .where('id', '=', id)
+      .returning(keys)
+      .executeTakeFirst()
   },
 })
