@@ -1,6 +1,7 @@
 import supertest from 'supertest'
 import createTestDatabase from '@tests/utils/createTestDatabase'
 import type { Kysely } from 'kysely'
+import { omit } from 'lodash'
 import { fakeTemplate, templateMatcher } from './utils'
 import buildRepository from '../repository'
 import createApp from '@/app'
@@ -49,6 +50,11 @@ describe('GET/:id', () => {
 
     expect(body).toEqual(templateMatcher({ id: 10 }))
   })
+
+  it('should return 404 of template does not exist', async () => {
+    const { body } = await supertest(app).get('/templates/19').expect(404)
+    expect(body.error).toMatch(/not found/i)
+  })
 })
 
 describe('POST', () => {
@@ -59,6 +65,24 @@ describe('POST', () => {
       .expect(201)
 
     expect(body).toEqual(templateMatcher())
+  })
+
+  it('should return 400 if content is missing', async () => {
+    const { body } = await supertest(app)
+      .post('/templates')
+      .send(omit(fakeTemplate(), ['content']))
+      .expect(400)
+
+    expect(body.error.message).toMatch(/content/i)
+  })
+
+  it('does not allow to create template with an empty title', async () => {
+    const { body } = await supertest(app)
+      .post('/templates')
+      .send(fakeTemplate({ content: '' }))
+      .expect(400)
+
+    expect(body.error.message).toMatch(/content/i)
   })
 })
 
@@ -80,6 +104,15 @@ describe('PATCH /:id', () => {
       })
     )
   })
+
+  it('returns 404 if template does not exist', async () => {
+    const { body } = await supertest(app)
+      .patch('/templates/999999')
+      .send(fakeTemplate())
+      .expect(404)
+
+    expect(body.error).toMatch(/not found/i)
+  })
 })
 
 describe('DELETE /:id', () => {
@@ -90,6 +123,6 @@ describe('DELETE /:id', () => {
 
     const { body } = await supertest(app).get('/templates/10').expect(404)
 
-    expect(body.error).toBe('Template not found')
+    expect(body.error).toMatch(/not found/i)
   })
 })

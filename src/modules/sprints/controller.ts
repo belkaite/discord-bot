@@ -47,7 +47,11 @@ export default (database: Kysely<DB>) => {
       const id = schema.parseId(req.params.id)
       const bodyPatch = schema.parseUpdateable(req.body)
       const sprint = await sprints.update(id, bodyPatch)
-      res.status(StatusCodes.OK).json(sprint)
+      if (sprint) {
+        res.status(StatusCodes.OK).json(sprint)
+      } else {
+        res.status(StatusCodes.NOT_FOUND).json({ error: 'Sprint not found' })
+      }
     } catch (error) {
       next(error)
     }

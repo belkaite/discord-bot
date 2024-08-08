@@ -36,7 +36,7 @@ export default (database: Kysely<DB>) => {
     try {
       const body = schema.parseInsertable(req.body)
       const template = await templates.create(body)
-      res.status(StatusCodes.CREATED).json(template)
+      if (template) res.status(StatusCodes.CREATED).json(template)
     } catch (error) {
       next(error)
     }
@@ -47,7 +47,11 @@ export default (database: Kysely<DB>) => {
       const id = schema.parseId(req.params.id)
       const body = schema.parseUpdateable(req.body)
       const template = await templates.update(id, body)
-      res.status(StatusCodes.OK).json(template)
+      if (template) {
+        res.status(StatusCodes.OK).json(template)
+      } else {
+        res.status(StatusCodes.NOT_FOUND).json({ error: 'Template not found' })
+      }
     } catch (error) {
       next(error)
     }
