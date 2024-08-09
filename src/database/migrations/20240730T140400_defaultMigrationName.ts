@@ -23,5 +23,5 @@ export async function up(db: Kysely<DB>) {
 }
 
 export async function down(db: Kysely<DB>) {
-  await db.deleteFrom('sprints').where('code', '=', 'CC-%').execute()
+  await db.deleteFrom('sprints').execute()
 }
