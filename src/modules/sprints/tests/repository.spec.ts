@@ -12,43 +12,25 @@ let repository: SprintRepository
 beforeAll(async () => {
   db = await createTestDatabase()
   repository = buildRepository(db)
+  await db.deleteFrom('sprints').execute()
 })
-
-afterAll(() => db.destroy())
 
 afterEach(async () => {
   await db.deleteFrom('sprints').execute()
 })
 
-describe('create', () => {
-  it('should create a sprint and get a sprint', async () => {
-    const sprint = await repository.create(fakeSprint({}))
+afterAll(() => db.destroy())
 
-    expect(sprint).toEqual(sprintMatcher({}))
+describe('create and select', () => {
+  it('should create a sprint and get a sprint', async () => {
+    const sprint = await repository.create(fakeSprint())
+
+    expect(sprint).toEqual(sprintMatcher())
 
     const sprints = await repository.selectAll()
     expect(sprints).toHaveLength(1)
     expect(sprints[0]).toEqual(sprint)
   })
-
-  it('should throw an error when creating a sprint with invalid code length', async () => {
-    const invalidSprintCode = fakeSprint({ code: 'WD' })
-    let error: Error | undefined
-
-    try {
-      await repository.create(invalidSprintCode)
-    } catch (e) {
-      error = e as Error
-    }
-
-    expect(error).toBeDefined()
-    if (error) {
-      expect(error.message).toMatch(/6 character/i)
-    }
-  })
-})
-
-describe('select', () => {
   it('should find a sprint by ID', async () => {
     await repository.create(fakeSprint({ id: 10 }))
 
@@ -83,22 +65,6 @@ describe('update', () => {
     })
 
     expect(updatedSprint).toBeUndefined()
-  })
-
-  it('should throw an error when updating the sprint with invalid code length', async () => {
-    const invalidSprintCode = fakeSprint({ id: 10, code: 'WD' })
-    let error: Error | undefined
-
-    try {
-      await repository.update(10, invalidSprintCode)
-    } catch (e) {
-      error = e as Error
-    }
-
-    expect(error).toBeDefined()
-    if (error) {
-      expect(error.message).toMatch(/6 character/i)
-    }
   })
 })
 

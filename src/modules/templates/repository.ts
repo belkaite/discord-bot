@@ -1,19 +1,19 @@
 import type { Insertable, Selectable, Updateable, Kysely } from 'kysely'
-import type { Sprints, DB } from '@/database/types'
+import type { DB, Templates } from '@/database/types'
 import { keys } from './schema'
 
-const TABLE = 'sprints'
-type Row = Sprints
+const TABLE = 'templates'
+type Row = Templates
 type RowWithoutId = Omit<Row, 'id'>
 type RowInsert = Insertable<RowWithoutId>
 type RowSelect = Selectable<Row>
 type RowUpdate = Updateable<RowWithoutId>
 
 export default (db: Kysely<DB>) => ({
-  async create(sprint: RowInsert): Promise<RowSelect | undefined> {
+  async create(template: RowInsert): Promise<RowSelect | undefined> {
     return db
       .insertInto(TABLE)
-      .values(sprint)
+      .values(template)
       .returning(keys)
       .executeTakeFirst()
   },
@@ -22,19 +22,11 @@ export default (db: Kysely<DB>) => ({
     return db.selectFrom(TABLE).selectAll().execute()
   },
 
-  async selectById(id: number): Promise<RowSelect | undefined> {
+  async selectByID(id: number): Promise<RowSelect | undefined> {
     return db
       .selectFrom(TABLE)
       .select(keys)
       .where('id', '=', id)
-      .executeTakeFirst()
-  },
-
-  async selectByCode(code: string): Promise<RowSelect | undefined> {
-    return db
-      .selectFrom(TABLE)
-      .select(keys)
-      .where('code', '=', code)
       .executeTakeFirst()
   },
 
