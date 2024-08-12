@@ -1,4 +1,3 @@
-
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
@@ -19,7 +18,6 @@ const getTimestamp = () => {
 
 const migrationName = process.argv[2] || 'defaultMigrationName'
 
-
 const timestamp = getTimestamp()
 const fileName = `${timestamp}_${migrationName}.ts`
 const filePath = path.join(migrationsDir, fileName)
@@ -36,4 +34,5 @@ export async function down(db: Kysely<SqliteDatabase>) {
 `
 
 fs.writeFileSync(filePath, template)
+/* eslint-disable no-console */
 console.log(`Created migration file: ${fileName}`)
