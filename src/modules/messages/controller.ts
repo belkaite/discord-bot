@@ -5,11 +5,13 @@ import { sendMessage } from '@/discordClient'
 import type { DB } from '@/database/types'
 import buildSprintsRepository from '@/modules/sprints/repository'
 import buildTemplatesRepository from '@/modules/templates/repository'
+import buildUsersRepository from '@/modules/users/repository'
 
 export default (database: Kysely<DB>) => {
   const router = Router()
   const sprintsRepository = buildSprintsRepository(database)
   const templatesRepository = buildTemplatesRepository(database)
+  const usersRepository = buildUsersRepository(database)
 
   router.post('/', async (req, res) => {
     const { username, sprintCode } = req.body
@@ -38,17 +40,21 @@ export default (database: Kysely<DB>) => {
       return res.status(500).send('Error getting templates')
     }
 
-    const users = [
-      { username: 'monikabelkaite' },
-      { username: 'jevgenijgamper' },
-    ]
+    let user
 
-    const user = users.find((u) => u.username === username)
-    if (!user) {
-      return res.status(404).json({ error: 'user not found' })
+    try {
+      user = await usersRepository.selectByUsername(username)
+      if (!user) {
+        return res
+          .status(StatusCodes.NOT_FOUND)
+          .json({ error: 'User not found' })
+      }
+    } catch (error) {
+      return res.status(500).send('Error finding the user')
     }
 
-    const template = templates[Math.floor(Math.random() * templates.length)].content
+    const template =
+      templates[Math.floor(Math.random() * templates.length)].content
 
     const congratsMessage = template
       .replace('{username}', username)

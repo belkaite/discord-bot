@@ -6,8 +6,8 @@ type Record = Users
 const schema = z.object({
   id: z.coerce.number().int().positive(),
   username: z.string().min(1).max(50),
-  firstName: z.string().min(1).max(50),
-  lastName: z.string().min(1).max(50),
+  first_name: z.string().min(1).max(50),
+  last_name: z.string().min(1).max(50),
 })
 
 const insertable = schema.omit({ id: true })
