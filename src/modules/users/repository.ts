@@ -20,6 +20,10 @@ export default (db: Kysely<DB>) => ({
       .executeTakeFirst()
   },
 
+   async selectAll(): Promise<RowSelect[]> {
+    return db.selectFrom(TABLE).selectAll().execute()
+  },
+
   async selectByUsername(username: string): Promise<RowSelect | undefined> {
     return db
       .selectFrom(TABLE)
