@@ -25,9 +25,9 @@ export interface Templates {
 }
 
 export interface Users {
-  first_name: string
+  firstName: string
   id: Generated<number | null>
-  last_name: string
+  lastName: string
   username: string
 }
 
