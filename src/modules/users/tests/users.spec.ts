@@ -26,6 +26,21 @@ afterEach(async () => {
   await db.deleteFrom('users').execute()
 })
 
+describe('GET', () => {
+  it('should return the all users', async () => {
+    await repository.create(fakeUser())
+
+    const { body } = await supertest(app).get('/users').expect(200)
+
+    expect(body).toEqual([userMatcher()])
+  })
+
+  it('should return empty list if there are no users', async () => {
+    const { body } = await supertest(app).get('/users').expect(200)
+
+    expect(body).toEqual([])
+  })
+})
 
 describe('GET /:username', () => {
   it('should return the user if it exists', async () => {
@@ -59,5 +74,21 @@ describe('POST', () => {
       .expect(400)
 
     expect(body.error.message).toMatch(/username/i)
+  })
+})
+
+describe('PATCH', () => {
+  it('does not support patching', async () => {
+    await supertest(app).patch('/users/1').expect(405)
+
+    await supertest(app).patch('/users/RuSau').expect(405)
+  })
+})
+
+describe('DELETE', () => {
+  it('does not support deleting', async () => {
+    await supertest(app).delete('/users/1').expect(405)
+
+    await supertest(app).delete('/users/RuSau').expect(405)
   })
 })

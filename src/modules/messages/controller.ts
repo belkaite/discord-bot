@@ -58,6 +58,8 @@ export default (database: Kysely<DB>) => {
 
     const congratsMessage = template
       .replace('{username}', username)
+      .replace('{firstName}', user.firstName)
+      .replace('{lastName}', user.lastName)
       .replace('{sprintTitle}', sprint.title)
 
     try {

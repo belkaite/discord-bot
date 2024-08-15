@@ -9,6 +9,15 @@ export default (database: Kysely<DB>) => {
   const router = Router()
   const usersRepository = buildRepository(database)
 
+  router.get('/', async (req, res, next) => {
+    try {
+      const users = await usersRepository.selectAll()
+      res.status(StatusCodes.OK).json(users)
+    } catch (error) {
+      next(error)
+    }
+  })
+
   router.get('/:username', async (req, res, next) => {
     try {
       const { username } = req.params
@@ -31,6 +40,18 @@ export default (database: Kysely<DB>) => {
     } catch (error) {
       next(error)
     }
+  })
+
+  router.all('/', (req, res) => {
+    res
+      .status(StatusCodes.METHOD_NOT_ALLOWED)
+      .json({ error: 'Method not allowed' })
+  })
+
+  router.all('/:username', (req, res) => {
+    res
+      .status(StatusCodes.METHOD_NOT_ALLOWED)
+      .json({ error: 'Method not allowed' })
   })
 
   return router
