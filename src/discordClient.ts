@@ -12,18 +12,13 @@ const channelId: string = CHANNEL_ID
 const { DISCORD_BOT_TOKEN } = process.env
 
 const client = new Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent,
-  ],
+  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
 })
 
 client.on('ready', () => {
   // eslint-disable-next-line no-console
-  console.log('bot is ready')
+  console.log('😸bot is ready')
 })
-
 
 client.login(DISCORD_BOT_TOKEN)
 
@@ -33,11 +28,11 @@ export async function sendMessage(message: string) {
     if (channel?.isTextBased()) {
       await (channel as TextChannel).send(message)
     } else {
+      // eslint-disable-next-line no-console
       console.error('The channel is not text-based or does not exist')
     }
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('Error fetching the channel or message:', error)
   }
 }
-
-// export const setupDiscordClient = () => client
