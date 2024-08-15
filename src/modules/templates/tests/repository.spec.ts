@@ -12,6 +12,7 @@ let repository: TemplateRepository
 beforeAll(async () => {
   db = await createTestDatabase()
   repository = buildRepository(db)
+  await db.deleteFrom('templates').execute()
 })
 
 afterEach(async () => {

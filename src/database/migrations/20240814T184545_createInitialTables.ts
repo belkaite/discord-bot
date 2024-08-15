@@ -5,6 +5,8 @@ export async function up(db: Kysely<SqliteDatabase>) {
     .createTable('users')
     .addColumn('id', 'integer', (c) => c.primaryKey().autoIncrement())
     .addColumn('username', 'text', (c) => c.notNull().unique())
+    .addColumn('first_name', 'text', (col) => col.notNull())
+    .addColumn('last_name', 'text', (col) => col.notNull())
     .execute()
 
   await db.schema
