@@ -66,10 +66,10 @@ export default (database: Kysely<DB>) => {
       return res.status(500).send('Error finding the user')
     }
 
-    const template =
-      templates[Math.floor(Math.random() * templates.length)].content
+    const selectedTemplate =
+      templates[Math.floor(Math.random() * templates.length)]
 
-    const congratsMessage = template
+    const congratsMessage = selectedTemplate.content
       .replace('{username}', username)
       .replace('{firstName}', user.firstName)
       .replace('{lastName}', user.lastName)
@@ -94,11 +94,69 @@ export default (database: Kysely<DB>) => {
     try {
       await sendMessage(congratsMessage)
       await sendMessage(gifUrl)
-      return res.status(200).send('Message sent successfully')
+
+      await database
+        .insertInto('messages')
+        .values({
+          userId: user.id,
+          sprintId: sprint.id,
+          templateId: selectedTemplate.id,
+          gifUrl,
+        })
+        .execute()
+
+      return res.status(200).send('Message sent and stored successfully')
     } catch (error) {
       return res.status(500).send('Failed to send the message')
     }
   })
+
+  router.get('/', async (req, res, next) => {
+    try {
+      const allmessages = await database
+        .selectFrom('messages')
+        .selectAll()
+        .execute()
+      res.status(StatusCodes.OK).json(allmessages)
+    } catch (error) {
+      next(error)
+    }
+  })
+
+  // const { username, sprint } = req.query
+
+  // try {
+  //   const query = database
+  //     .selectFrom('messages')
+  //     .innerJoin('users', 'users.id', 'messages.userId')
+  //     .innerJoin('sprints', 'sprints.id', 'messages.sprintId')
+  //     .select([
+  //       'messages.id',
+  //       'users.username as username',
+  //       'sprints.code as sprintCode',
+  //       'messages.gifUrl as gifUrl',
+  //       'messages.createdAt as createdAt',
+  //     ])
+
+  //   // If a username is provided, filter by username
+  //   if (username) {
+  //     query.where('users.username', '=', username as string)
+  //   }
+
+  //   // If a sprint code is provided, filter by sprint code
+  //   if (sprint) {
+  //     query.where('sprints.code', '=', sprint as string)
+  //   }
+
+  //   // Execute the query and get the results
+  //   const messages = await query.execute()
+
+  //   // Return the results as a JSON response
+  //   return res.status(200).json(messages)
+  // } catch (error) {
+  //   console.error('Error fetching messages:', error)
+  //   return res.status(500).send('Failed to fetch messages')
+  // }
 
   return router
 }
