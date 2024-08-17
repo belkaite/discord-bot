@@ -112,51 +112,38 @@ export default (database: Kysely<DB>) => {
   })
 
   router.get('/', async (req, res, next) => {
+    const { username, sprint } = req.query
+
     try {
-      const allmessages = await database
+      let query = database
         .selectFrom('messages')
-        .selectAll()
-        .execute()
-      res.status(StatusCodes.OK).json(allmessages)
+        .innerJoin('users', 'users.id', 'messages.userId')
+        .innerJoin('sprints', 'sprints.id', 'messages.sprintId')
+        .innerJoin('templates', 'templates.id', 'messages.templateId')
+        .select([
+          'messages.id',
+          'users.username as username',
+          'sprints.code as sprintCode',
+          'templates.content as template',
+          'messages.gifUrl as gifUrl',
+          'messages.createdAt as createdAt',
+        ])
+
+      if (username) {
+        query = query.where('users.username', '=', username as string)
+      }
+
+      if (sprint) {
+        query = query.where('sprints.code', '=', sprint as string)
+      }
+
+      const filteredMessages = await query.execute()
+
+      return res.status(200).json(filteredMessages)
     } catch (error) {
       next(error)
     }
   })
-
-  // const { username, sprint } = req.query
-
-  // try {
-  //   const query = database
-  //     .selectFrom('messages')
-  //     .innerJoin('users', 'users.id', 'messages.userId')
-  //     .innerJoin('sprints', 'sprints.id', 'messages.sprintId')
-  //     .select([
-  //       'messages.id',
-  //       'users.username as username',
-  //       'sprints.code as sprintCode',
-  //       'messages.gifUrl as gifUrl',
-  //       'messages.createdAt as createdAt',
-  //     ])
-
-  //   // If a username is provided, filter by username
-  //   if (username) {
-  //     query.where('users.username', '=', username as string)
-  //   }
-
-  //   // If a sprint code is provided, filter by sprint code
-  //   if (sprint) {
-  //     query.where('sprints.code', '=', sprint as string)
-  //   }
-
-  //   // Execute the query and get the results
-  //   const messages = await query.execute()
-
-  //   // Return the results as a JSON response
-  //   return res.status(200).json(messages)
-  // } catch (error) {
-  //   console.error('Error fetching messages:', error)
-  //   return res.status(500).send('Failed to fetch messages')
-  // }
 
   return router
 }
