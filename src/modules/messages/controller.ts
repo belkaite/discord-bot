@@ -14,6 +14,14 @@ if (!GIPHY_API_KEY) {
   throw new Error('Provide GIPHY API KEY')
 }
 
+interface GiphyGif {
+  url: string
+}
+
+interface GiphyApiResponse {
+  data: GiphyGif[]
+}
+
 export default (database: Kysely<DB>) => {
   const router = Router()
   const sprintsRepository = buildSprintsRepository(database)
@@ -24,6 +32,8 @@ export default (database: Kysely<DB>) => {
     const { username, sprintCode } = req.body
 
     let sprint
+    let templates
+    let user
 
     try {
       sprint = await sprintsRepository.selectByCode(sprintCode)
@@ -36,8 +46,6 @@ export default (database: Kysely<DB>) => {
       return res.status(500).send('Error finding sprint')
     }
 
-    let templates
-
     try {
       templates = await templatesRepository.selectAll()
       if (templates.length === 0) {
@@ -46,8 +54,6 @@ export default (database: Kysely<DB>) => {
     } catch (error) {
       return res.status(500).send('Error getting templates')
     }
-
-    let user
 
     try {
       user = await usersRepository.selectByUsername(username)
@@ -69,16 +75,20 @@ export default (database: Kysely<DB>) => {
       .replace('{lastName}', user.lastName)
       .replace('{sprintTitle}', sprint.title)
 
-    let gifUrl
+    let gifUrl: string | undefined
 
     try {
       const url = `https://api.giphy.com/v1/gifs/search?api_key=${GIPHY_API_KEY}&q=congratulations&rating=g`
       const response = await fetch(url)
-      const data = await response.json()
+      const data = (await response.json()) as GiphyApiResponse
       const index = Math.floor(Math.random() * data.data.length)
       gifUrl = data.data[index].url
     } catch (error) {
-      console.error('Error fetching GIF from Giphy API:', error)
+      return res.status(500).json('Failed to fetch a GIF from Giphy')
+    }
+
+    if (!gifUrl) {
+      throw new Error('Failed to fetch a valid GIF URL from Giphy API')
     }
 
     try {
@@ -86,7 +96,7 @@ export default (database: Kysely<DB>) => {
       await sendMessage(gifUrl)
       return res.status(200).send('Message sent successfully')
     } catch (error) {
-      return res.status(500).send('Error sending message')
+      return res.status(500).send('Failed to send the message')
     }
   })
 
