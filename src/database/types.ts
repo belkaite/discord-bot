@@ -6,10 +6,11 @@ export type Generated<T> =
     : ColumnType<T, T | undefined, T>
 
 export interface Messages {
+  createdAt: Generated<string>
+  gifUrl: string
   id: Generated<number | null>
   sprintId: number | null
   templateId: number | null
-  timestamp: Generated<number>
   userId: number | null
 }
 

@@ -1,4 +1,4 @@
-import { Kysely, SqliteDatabase } from 'kysely'
+import { Kysely, SqliteDatabase, sql } from 'kysely';
 
 export async function up(db: Kysely<SqliteDatabase>) {
   await db.schema
@@ -34,7 +34,7 @@ export async function up(db: Kysely<SqliteDatabase>) {
     .addColumn('template_id', 'integer', (c) =>
       c.references('templates.id').onDelete('cascade')
     )
-    .addColumn('timestamp', 'integer', (c) => c.notNull().defaultTo(Date.now()))
+    .addColumn('created_at', 'datetime', (c) => c.notNull().defaultTo(sql`CURRENT_TIMESTAMP`))
     .execute()
 }
 

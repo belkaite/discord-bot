@@ -66,10 +66,10 @@ export default (database: Kysely<DB>) => {
       return res.status(500).send('Error finding the user')
     }
 
-    const template =
-      templates[Math.floor(Math.random() * templates.length)].content
+    const selectedTemplate =
+      templates[Math.floor(Math.random() * templates.length)]
 
-    const congratsMessage = template
+    const congratsMessage = selectedTemplate.content
       .replace('{username}', username)
       .replace('{firstName}', user.firstName)
       .replace('{lastName}', user.lastName)
@@ -94,9 +94,54 @@ export default (database: Kysely<DB>) => {
     try {
       await sendMessage(congratsMessage)
       await sendMessage(gifUrl)
-      return res.status(200).send('Message sent successfully')
+
+      await database
+        .insertInto('messages')
+        .values({
+          userId: user.id,
+          sprintId: sprint.id,
+          templateId: selectedTemplate.id,
+          gifUrl,
+        })
+        .execute()
+
+      return res.status(200).send('Message sent and stored successfully')
     } catch (error) {
       return res.status(500).send('Failed to send the message')
+    }
+  })
+
+  router.get('/', async (req, res, next) => {
+    const { username, sprint } = req.query
+
+    try {
+      let query = database
+        .selectFrom('messages')
+        .innerJoin('users', 'users.id', 'messages.userId')
+        .innerJoin('sprints', 'sprints.id', 'messages.sprintId')
+        .innerJoin('templates', 'templates.id', 'messages.templateId')
+        .select([
+          'messages.id',
+          'users.username as username',
+          'sprints.code as sprintCode',
+          'templates.content as template',
+          'messages.gifUrl as gifUrl',
+          'messages.createdAt as createdAt',
+        ])
+
+      if (username) {
+        query = query.where('users.username', '=', username as string)
+      }
+
+      if (sprint) {
+        query = query.where('sprints.code', '=', sprint as string)
+      }
+
+      const filteredMessages = await query.execute()
+
+      return res.status(200).json(filteredMessages)
+    } catch (error) {
+      next(error)
     }
   })
 
