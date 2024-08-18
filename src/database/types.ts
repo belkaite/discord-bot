@@ -8,26 +8,26 @@ export type Generated<T> =
 export interface Messages {
   createdAt: Generated<string>
   gifUrl: string
-  id: Generated<number | null>
-  sprintId: number | null
-  templateId: number | null
-  userId: number | null
+  id: Generated<number>
+  sprintId: number
+  templateId: number
+  userId: number
 }
 
 export interface Sprints {
   code: string
-  id: Generated<number | null>
+  id: Generated<number>
   title: string
 }
 
 export interface Templates {
   content: string
-  id: Generated<number | null>
+  id: Generated<number>
 }
 
 export interface Users {
   firstName: string
-  id: Generated<number | null>
+  id: Generated<number>
   lastName: string
   username: string
 }
