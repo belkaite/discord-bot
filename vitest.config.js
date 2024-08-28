@@ -4,6 +4,9 @@ import path from 'node:path'
 export default {
   test: {
     globals: true,
+    coverage: {
+      provider: 'v8', // uses @bcoe/v8-coverage behind the scenes
+    },
   },
   resolve: {
     alias: {
@@ -11,4 +14,4 @@ export default {
       '@tests': path.resolve(__dirname, './tests'),
     },
   },
-};
+}
