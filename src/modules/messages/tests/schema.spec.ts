@@ -8,7 +8,7 @@ const fakeMessage = () => ({
   templateId: 1,
   gifUrl:
     'https://giphy.com/gifs/congratulations-baby-footsiethefoot-J1bFxdlD4fWAYIuVjZ',
-  createdAt: new Date(),
+  createdAt: '2024-08-29 18:00:39',
 })
 
 describe('zod schema validation', () => {

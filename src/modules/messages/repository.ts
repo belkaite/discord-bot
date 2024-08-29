@@ -26,6 +26,10 @@ export default (db: Kysely<DB>) => ({
       .executeTakeFirst()
   },
 
+  async selectAll(): Promise<RowSelect[]> {
+    return db.selectFrom(TABLE).selectAll().execute()
+  },
+
   async select(
     username: string,
     sprintCode: string

@@ -9,7 +9,7 @@ const schema = z.object({
   sprintId: z.number().int().positive(),
   templateId: z.number().int().positive(),
   gifUrl: z.string().url(),
-  createdAt: z.date()
+  createdAt: z.string()
 })
 
 const insertable = schema.omit({ id: true, createdAt: true })
