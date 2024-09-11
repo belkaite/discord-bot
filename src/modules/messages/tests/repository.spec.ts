@@ -4,6 +4,7 @@ import buildRepository from '../repository'
 import { messageMatcher, fakeMessage } from './utils'
 import type { DB } from '@/database/types'
 
+
 type MessagesRepository = ReturnType<typeof buildRepository>
 
 let db: Kysely<DB>
@@ -81,5 +82,30 @@ describe('select', () => {
     const messages = await repository.select('', '')
 
     expect(messages).toHaveLength(3)
+  })
+
+  it('should return messages by username', async () => {
+    const messages = await repository.select('RuSau', '')
+
+    expect(messages).toHaveLength(2)
+    messages.forEach((message) => {
+      expect(message.username).toBe('RuSau')
+    })
+  })
+
+  it('should return messages by sprint code', async () => {
+    const messages = await repository.select('', 'CC-1.1')
+
+    expect(messages).toHaveLength(1)
+    expect(messages[0].sprintCode).toBe('CC-1.1')
+  })
+
+  it('should retunr messages filtered by both - username and sprint code', async () => {
+    const messages = await repository.select('RuSau', 'CC-1.1')
+
+    expect(messages).toHaveLength(1)
+    expect(messages[0].sprintCode).toBe('CC-1.1')
+    expect(messages[0].username).toBe('RuSau')
+
   })
 })
