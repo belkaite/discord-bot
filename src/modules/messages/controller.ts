@@ -7,6 +7,7 @@ import type { DB } from '@/database/types'
 import buildSprintsRepository from '@/modules/sprints/repository'
 import buildTemplatesRepository from '@/modules/templates/repository'
 import buildUsersRepository from '@/modules/users/repository'
+import buildMessagesRepository from '@/modules/messages/repository'
 
 const { GIPHY_API_KEY } = process.env
 
@@ -27,6 +28,7 @@ export default (database: Kysely<DB>) => {
   const sprintsRepository = buildSprintsRepository(database)
   const templatesRepository = buildTemplatesRepository(database)
   const usersRepository = buildUsersRepository(database)
+  const messagesRepository = buildMessagesRepository(database)
 
   router.post('/', async (req, res) => {
     const { username, sprintCode } = req.body
@@ -95,15 +97,12 @@ export default (database: Kysely<DB>) => {
       await sendMessage(congratsMessage)
       await sendMessage(gifUrl)
 
-      await database
-        .insertInto('messages')
-        .values({
-          userId: user.id,
-          sprintId: sprint.id,
-          templateId: selectedTemplate.id,
-          gifUrl,
-        })
-        .execute()
+      await messagesRepository.create({
+        userId: user.id,
+        sprintId: sprint.id,
+        templateId: selectedTemplate.id,
+        gifUrl,
+      })
 
       return res.status(200).send('Message sent and stored successfully')
     } catch (error) {
@@ -115,31 +114,12 @@ export default (database: Kysely<DB>) => {
     const { username, sprint } = req.query
 
     try {
-      let query = database
-        .selectFrom('messages')
-        .innerJoin('users', 'users.id', 'messages.userId')
-        .innerJoin('sprints', 'sprints.id', 'messages.sprintId')
-        .innerJoin('templates', 'templates.id', 'messages.templateId')
-        .select([
-          'messages.id',
-          'users.username as username',
-          'sprints.code as sprintCode',
-          'templates.content as template',
-          'messages.gifUrl as gifUrl',
-          'messages.createdAt as createdAt',
-        ])
+      const filteredMessages = await messagesRepository.select(
+        username as string,
+        sprint as string
+      )
 
-      if (username) {
-        query = query.where('users.username', '=', username as string)
-      }
-
-      if (sprint) {
-        query = query.where('sprints.code', '=', sprint as string)
-      }
-
-      const filteredMessages = await query.execute()
-
-      return res.status(200).json(filteredMessages)
+      res.status(200).json(filteredMessages)
     } catch (error) {
       next(error)
     }
