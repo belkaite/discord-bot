@@ -58,4 +58,74 @@ describe('POST', () => {
     expect(res.status).toBe(200)
     expect(res.text).toMatch(/success/i)
   })
+
+  it('should return 400 if username is missing', async () => {
+    const res = await supertest(app).post('/messages').send({
+      sprintCode: 'CC-1.1',
+    })
+
+    expect(res.status).toBe(400)
+    expect(res.body.error).toMatch(/username/i)
+  })
+
+  it('should return 400 if sprintcode is missing', async () => {
+    const res = await supertest(app).post('/messages').send({
+      username: 'RuSau',
+    })
+
+    expect(res.status).toBe(400)
+    expect(res.body.error).toMatch(/sprintCode/i)
+  })
+
+  it('should return 404 if sprint does not exist', async () => {
+    await db
+      .insertInto('users')
+      .values({
+        username: 'RuSau',
+        firstName: 'Ruta',
+        lastName: 'Saule',
+      })
+      .execute()
+
+    await db
+      .insertInto('templates')
+      .values({
+        content: 'Congrats on completing {sprintTitle}, {username}!',
+      })
+      .execute()
+
+    const res = await supertest(app).post('/messages').send({
+      username: 'RuSau',
+      sprintCode: '11111111',
+    })
+
+    expect(res.status).toBe(404)
+    expect(res.body.error).toMatch(/sprint not found/i)
+  })
+
+  it('should return 404 if user does not exist', async () => {
+    await db
+      .insertInto('sprints')
+      .values({ code: 'CC-1.1', title: 'Cat m 1 sprint 1' })
+      .execute()
+
+    await db
+      .insertInto('templates')
+      .values({
+        content: 'Congrats on completing {sprintTitle}, {username}!',
+      })
+      .execute()
+
+    const res = await supertest(app).post('/messages').send({
+      username: 'Random',
+      sprintCode: 'CC-1.1',
+    })
+
+    expect(res.status).toBe(404)
+    expect(res.body.error).toMatch(/user not found/i)
+  })
+})
+
+describe('GET', () => {
+    
 })
