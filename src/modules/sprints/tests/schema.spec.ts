@@ -1,10 +1,11 @@
 import { omit } from 'lodash'
 import { parse, parseId, parseInsertable, parseUpdateable } from '../schema'
 
+
 const fakeSprint = () => ({
   id: 1,
-  code: 'WD-1.1',
-  title: 'Web Development Module 1 Sprint 1',
+  code: 'CC-1.1',
+  title: 'Cat Course Module 1 Sprint 1',
 })
 
 describe('zod schema validation', () => {

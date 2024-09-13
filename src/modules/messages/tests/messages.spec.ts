@@ -4,6 +4,7 @@ import type { Kysely } from 'kysely'
 import buildRepository from '../repository'
 import createApp from '@/app'
 import type { DB } from '@/database/types'
+import { fakeMessage, finalMessageMatcher } from './utils'
 
 type MessagesRepository = ReturnType<typeof buildRepository>
 
@@ -127,5 +128,28 @@ describe('POST', () => {
 })
 
 describe('GET', () => {
-    
+  it('should return return a list of existing messages', async () => {
+    await db
+      .insertInto('users')
+      .values({ id: 1, username: 'RuSau', firstName: 'Ruta', lastName: 'Saule' })
+      .execute()
+    await db
+      .insertInto('sprints')
+      .values({ id: 1, code: 'CC-1.1', title: 'Web Development Module 1 Sprint 1' })
+      .execute()
+    await db
+      .insertInto('templates')
+      .values({ id: 1, content: 'Congrats on completing {sprintTitle}, {username}' })
+      .execute()
+
+    await repository.create(
+      fakeMessage({ userId: 1, sprintId: 1, templateId: 1 })
+    )
+
+    const { body } = await supertest(app).get('/messages').expect(200)
+
+    expect(body).toEqual([
+      finalMessageMatcher(),
+    ])
+  })
 })

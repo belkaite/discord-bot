@@ -24,3 +24,17 @@ export const messageMatcher = (
   createdAt: expect.any(String),
   ...overrides,
 })
+
+export const finalMessageMatcher = (
+  overrides: Partial<Insertable<Messages>> = {}
+) => ({
+  id: expect.any(Number),
+  username: 'RuSau',
+  sprintCode: 'CC-1.1',
+  template: 'Congrats on completing {sprintTitle}, {username}',
+  gifUrl:
+    'https://giphy.com/gifs/congratulations-baby-footsiethefoot-J1bFxdlD4fWAYIuVjZ',
+  createdAt: expect.any(String),
+  ...overrides,
+})
+
