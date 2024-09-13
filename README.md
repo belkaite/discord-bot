@@ -2,7 +2,7 @@
 
 This project is a Discord bot (more precisely - CatBot ), built using node.js, REST API, Kysely based database system to automate sending of congratulatory messages when users complete sprints. Giphy API is integrated as well to send celebratory GIFs along the messages.
 
-![alt text](cat-bot.png)
+<img src="cat-bot.png" alt="CatBot" width="300"/>
 
 ## Supported endpoints
 
