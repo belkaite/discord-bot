@@ -33,6 +33,12 @@ export default (database: Kysely<DB>) => {
   router.post('/', async (req, res) => {
     const { username, sprintCode } = req.body
 
+    if (!username || !sprintCode) {
+      return res
+        .status(400)
+        .json({ error: 'username and sprintCode are required. Please provide' })
+    }
+
     let sprint
     let templates
     let user

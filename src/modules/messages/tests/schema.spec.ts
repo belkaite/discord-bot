@@ -1,6 +1,7 @@
 import { omit } from 'lodash'
 import { parse, parseId, parseInsertable } from '../schema'
 
+
 const fakeMessage = () => ({
   id: 1,
   userId: 1,

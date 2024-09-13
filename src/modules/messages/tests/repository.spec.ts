@@ -100,7 +100,7 @@ describe('select', () => {
     expect(messages[0].sprintCode).toBe('CC-1.1')
   })
 
-  it('should retunr messages filtered by both - username and sprint code', async () => {
+  it('should return messages filtered by both - username and sprint code', async () => {
     const messages = await repository.select('RuSau', 'CC-1.1')
 
     expect(messages).toHaveLength(1)
