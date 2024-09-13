@@ -6,17 +6,17 @@ This project is a Discord bot (more precisely - CatBot ), built using node.js, R
 
 ## Supported endpoints
 
-POST /messages - send a congratulatory message to a user on Discord
-GET /messages - get a list of all congratulatory messages
-GET /messages?username={username} - get a list of all congratulatory messages for a specific user
-GET /messages?sprint={sprintCode} - get a list of all congratulatory messages for a specific sprint
-CRUD /templates - POST/GET/PATCH/DELETE endpoints for managing congratulatory message templates
-CRUD /sprints - POST/GET/PATCH/DELETE endpoints for managing sprints
+- POST /messages - send a congratulatory message to a user on Discord
+- GET /messages - get a list of all congratulatory messages
+- GET /messages?username={username} - get a list of all congratulatory messages for a specific user
+- GET /messages?sprint={sprintCode} - get a list of all congratulatory messages for a specific sprint
+- CRUD /templates - POST/GET/PATCH/DELETE endpoints for managing congratulatory message templates
+- CRUD /sprints - POST/GET/PATCH/DELETE endpoints for managing sprints
 
 Additionally created:
-GET /users - get a list of all users
-GET /users/{:username} = get users by username
-POST /users - create a new user
+- GET /users - get a list of all users
+- GET /users/{:username} = get users by username
+- POST /users - create a new user
 
 ## Set up
 
