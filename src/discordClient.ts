@@ -11,9 +11,13 @@ const channelId: string = CHANNEL_ID
 
 const { DISCORD_BOT_TOKEN } = process.env
 
-const client = new Client({
-  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
-})
+export function createClient() {
+  return new Client({
+    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
+  })
+}
+
+const client = createClient()
 
 client.on('ready', () => {
   // eslint-disable-next-line no-console

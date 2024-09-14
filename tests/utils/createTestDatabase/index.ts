@@ -19,11 +19,14 @@ export default async () => {
   results
     ?.filter((result) => result.status === 'Error')
     .forEach((result) => {
+      // eslint-disable-next-line no-console
       console.error(`failed to execute migration "${result.migrationName}"`)
     })
 
   if (error) {
+    // eslint-disable-next-line no-console
     console.error('failed to migrate')
+    // eslint-disable-next-line no-console
     console.error(error)
   }
 
