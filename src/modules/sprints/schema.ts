@@ -6,7 +6,7 @@ type Record = Sprints
 const schema = z.object({
   id: z.coerce.number().int().positive(),
   code: z.string().length(6),
-  title: z.string().min(1).max(100),
+  title: z.string().min(1).max(250),
 })
 
 const insertable = schema.omit({ id: true })
