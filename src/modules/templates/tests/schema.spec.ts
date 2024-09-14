@@ -31,11 +31,11 @@ describe('zod schema validation', () => {
     expect(() => parseId(-5)).toThrow(/than 0/i)
   })
 
-  it('throws an error when content is more than 100 strings', () => {
+  it('throws an error when content is more than 250 strings', () => {
     const contentWithTooLongName = {
       ...fakeTemplate(),
       content:
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum vehicula accumsan nunc, a tempor sapien ornare id. Curabitur dictum.',
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum vehicula accumsan nunc, a tempor sapien ornare id. Curabitur dictum. Etiam varius felis at massa vehicula, nec viverra arcu tincidunt. Nulla facilisi. Donec faucibus dolor in sapien efficitur sollicitudin. Cras vestibulum massa nec purus varius, id tincidunt felis pharetra. Suspendisse ultricies, lectus ac porttitor cursus, tortor metus laoreet tortor, sit amet iaculis risus ligula sit amet urna.',
     }
 
     expect(() => parse(contentWithTooLongName)).toThrow(/code/i)
