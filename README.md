@@ -79,6 +79,3 @@ npm run generate-migration {migration name}
 ```
 
 
-### Public repo with a peer programming
-
-https://github.com/belkaite/pair-programming-express-app
